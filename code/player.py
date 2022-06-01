@@ -1,5 +1,5 @@
 import pygame
-from support import import_folder
+# from support import import_folder # Test code
 
 class Player (pygame.sprite.Sprite):
     def __init__(self, pos):
