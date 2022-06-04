@@ -7,7 +7,7 @@ from settings import*
 # Pygame Setup
 pygame.init() # Initialises pygame
 screen = pygame.display.set_mode((screen_width, screen_height)) # Sets screen dimensions
-clock = pygame.time.Clock() # Frame rate measuremen
+clock = pygame.time.Clock() # Frame rate measureme
 level = Level(level_0, screen) # level takes arguments level_0 and the screen
 
 while True:
