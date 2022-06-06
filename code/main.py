@@ -5,8 +5,8 @@ from game_data import level_0
 from tiles import Tile, StaticTile
 
 pygame.init()  # Initialises pygame
-screen_width = 400 # Width of player screen
-screen_height = 200 # Height of player screen
+screen_width = 1280 # Width of player screen
+screen_height = 720 # Height of player screen
 screen = pygame.display.set_mode((screen_width, screen_height))  # Game screen
 clock = pygame.time.Clock()  # Sets frame limit
 level = Level(level_0, screen) # Loads level 0, functions passes a different function everytime i.e level_0, level_1 etc

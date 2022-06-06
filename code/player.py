@@ -1,20 +1,21 @@
 import pygame
-# from support import import_folder # Test code
+from support import import_folder
 
 class Player (pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, surface):
         super().__init__()
         self.import_character_assets()
         self.frame_index = 0
         self.animation_speed = 0.15
         self.image = self.animations['idle'][self.frame_index]
         self.rect = self.image.get_rect(topleft=pos)
+        self.display_surface = surface
 
         # Player movement
         self.direction = pygame.math.Vector2(0, 0)
-        self.speed = 12
-        self.gravity = 2
-        self.jump_speed = -20
+        self.speed = 4
+        self.gravity = 0.6
+        self.jump_speed = -7
 
         # Player animation status
         self.status = 'idle'
