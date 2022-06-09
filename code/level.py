@@ -1,33 +1,41 @@
 import pygame
-from tiles import Tile, StaticTile, AnimatedTile
-from settings import tile_size, screen_width
-from player import Player
-from support import import_csv_layout, import_cut_graphics, import_folder
-from enemy import Enemy
+
 from decoration import Sky
+from enemy import Enemy
+from game_data import levels
+from player import Player
+from settings import tile_size, screen_width, screen_height
+from support import import_csv_layout, import_cut_graphics
+from tiles import Tile, StaticTile
+from overworld import Overworld
 
 
 class Level:  # Class that contains all level information
-    def __init__(self, level_data, surface):
+    def __init__(self, current_level, surface, create_overworld, change_coins, change_health):
         # Level base
         self.background = pygame.image.load('../graphics/terrain/background_0.png')
         self.display_surface = surface
         self.world_shift = 0
         self.current_x = None
 
+        # OverWorld Connection
+        self.create_overworld = create_overworld
+        self.current_level = current_level
+        level_data = levels[self.current_level]
+        self.new_max_level = level_data['unlock']
+
         # Player Setup
         player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
-        self.player_setup(player_layout)
+        self.player_setup(player_layout, change_health)
 
         # Terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout, 'terrain')
 
-        # Grass Setup
-        # grass_layout = import_csv_layout(level_data['grass'])
-        # self.grass_sprites = self.create_tile_group(grass_layout, 'grass')
+        #User interface
+        self.change_coins = change_coins
 
         # Coin Setup
         coin_layout = import_csv_layout(level_data['coins'])
@@ -78,13 +86,13 @@ class Level:  # Class that contains all level information
         #  tile_surface = grass_tile_list[int(val)]
         # sprite = StaticTile(tile_size, x, y, tile_surface)
 
-    def player_setup(self, layout):
+    def player_setup(self, layout, change_health):
         for row_index, row in enumerate(layout):
             for col_index, val in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
                 if val == '0':
-                    sprite = Player((x, y), self.display_surface)
+                    sprite = Player((x, y), self.display_surface, change_health)
                     self.player.add(sprite)
 
                 if val == '1':
@@ -154,6 +162,35 @@ class Level:  # Class that contains all level information
             self.world_shift = 0
             player.speed = 4
 
+    def check_death(self):
+        if self.player.sprite.rect.top > screen_height:
+            self.create_overworld(self.current_level, 0)
+
+    def check_win(self):
+        if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
+            self.create_overworld(self.current_level, self.new_max_level)
+
+    def check_coin_collisions(self):
+        collided_coins = pygame.sprite.spritecollide(self.player.sprite, self.coin_sprites, True)
+        if collided_coins:
+            for coin in collided_coins:
+                self.change_coins(1)
+
+    def check_enemy_collisions(self):
+        enemy_collisions = pygame.sprite.spritecollide(self.player.sprite, self.enemy_sprites, False)
+
+        if enemy_collisions:
+            for enemy in enemy_collisions:
+                enemy_center = enemy.rect.centery
+                enemy_top = enemy.rect.top
+                player_bottom = self.player.sprite.rect.bottom
+                if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y >= 0:
+                    self.player.sprite.direction.y = -7
+                    enemy.kill()
+                else:
+                    self.player.sprite.get_damage()
+
+
     def run(self):  # Runs the level
 
         # decoration
@@ -178,6 +215,13 @@ class Level:  # Class that contains all level information
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
         self.scroll_x()
+
+        self.check_death()
+        self.check_win()
+
+        self.check_coin_collisions()
+        self.check_enemy_collisions()
+
         self.player.draw(self.display_surface)
         self.goal.update(self.world_shift)
         self.goal.draw(self.display_surface)
