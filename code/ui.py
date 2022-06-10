@@ -17,6 +17,7 @@ class UI:
         self.coin_rect = self.coin.get_rect(topleft = (50, 30))
         self.font = pygame.font.Font('../graphics/ui/MinimalPixel v2.ttf', 15)
 
+
     def show_health(self, current, full):
         self.display_surface.blit(self.health_bar,(10, 7))
         current_health_ratio = current / full
@@ -29,3 +30,4 @@ class UI:
         coin_amount_surf = self.font.render(str(amount), False, 'white')
         coin_amount_rect = coin_amount_surf.get_rect(midleft = (self.coin_rect.right + 4, self.coin_rect.centery))
         self.display_surface.blit(coin_amount_surf, coin_amount_rect)
+

@@ -18,6 +18,11 @@ class Level:  # Class that contains all level information
         self.world_shift = 0
         self.current_x = None
 
+        #Audio
+        self.coin_sound = pygame.mixer.Sound('../audio/effects/coin.wav')
+        self.coin_sound.set_volume(0.2)
+        self.stomp_sound = pygame.mixer.Sound('../audio/effects/stomp.wav')
+
         # OverWorld Connection
         self.create_overworld = create_overworld
         self.current_level = current_level
@@ -52,6 +57,9 @@ class Level:  # Class that contains all level information
         # Decoration
         self.sky = Sky(9)
 
+        #Time
+        current_time = pygame.time.get_ticks()
+
     def create_tile_group(self, layout, type):
         sprite_group = pygame.sprite.Group()
 
@@ -81,10 +89,6 @@ class Level:  # Class that contains all level information
 
         return sprite_group
 
-        # if type == 'grass':
-        #   grass_tile_list = import_cut_graphics('../graphics/terrain/terrain.png')
-        #  tile_surface = grass_tile_list[int(val)]
-        # sprite = StaticTile(tile_size, x, y, tile_surface)
 
     def player_setup(self, layout, change_health):
         for row_index, row in enumerate(layout):
@@ -107,24 +111,20 @@ class Level:  # Class that contains all level information
 
     def horizontal_movement_collision(self):
         player = self.player.sprite
-        player.rect.x += player.direction.x * player.speed
+        player.collision_rect.x += player.direction.x * player.speed
         collidable_sprites = self.terrain_sprites.sprites
 
         for sprite in collidable_sprites():
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.collision_rect):
                 if player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
+                    player.collision_rect.left = sprite.rect.right
                     player.on_left = True
                     self.current_x = player.rect.left
                 elif player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
+                    player.collision_rect.right = sprite.rect.left
                     player.on_right = True
                     self.current_x = player.rect.right
 
-        if player.on_left and (player.rect.left < self.current_x or player.direction.x >= 0):
-            player.on_left = False
-        if player.on_right and (player.rect.right > self.current_x or player.direction.x <= 0):
-            player.on_right = False
 
     def vertical_movement_collision(self):
         player = self.player.sprite
@@ -132,20 +132,18 @@ class Level:  # Class that contains all level information
         collidable_sprites = self.terrain_sprites.sprites
 
         for sprite in collidable_sprites():
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.collision_rect):
                 if player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
+                    player.collision_rect.bottom = sprite.rect.top
                     player.direction.y = 0
                     player.on_ground = True
                 elif player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
+                    player.collision_rect.top = sprite.rect.bottom
                     player.direction.y = 0
                     player.on_ceiling = True
 
             if player.on_ground and player.direction.y < 0 or player.direction.y > 1:
                 player.on_ground = False
-            if player.on_ceiling and player.direction.y > 0:
-                player.on_ceiling = False
 
     def scroll_x(self):
         player = self.player.sprite
@@ -173,6 +171,7 @@ class Level:  # Class that contains all level information
     def check_coin_collisions(self):
         collided_coins = pygame.sprite.spritecollide(self.player.sprite, self.coin_sprites, True)
         if collided_coins:
+            self.coin_sound.play()
             for coin in collided_coins:
                 self.change_coins(1)
 
@@ -185,10 +184,18 @@ class Level:  # Class that contains all level information
                 enemy_top = enemy.rect.top
                 player_bottom = self.player.sprite.rect.bottom
                 if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y >= 0:
+                    self.stomp_sound.play()
                     self.player.sprite.direction.y = -7
                     enemy.kill()
                 else:
                     self.player.sprite.get_damage()
+
+    def timer(self):
+        font = pygame.font.Font('../graphics/ui/MinimalPixel v2.ttf', 50)
+        current_time = pygame.time.get_ticks()
+        time_surf = font.render(current_time, False, (64, 64, 64))
+        time_rect = time_surf.get_rect(center=(600, 1000))
+
 
 
     def run(self):  # Runs the level
