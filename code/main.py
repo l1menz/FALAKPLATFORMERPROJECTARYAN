@@ -71,13 +71,6 @@ class Game:
             self.ui.show_coins(self.coins)
             self.check_game_over()
 
-    def timer():
-        timer = 0
-        clock.tick(FPS)
-        timer += 1 / FPS
-        elapsed_time = datetime.timedelta(seconds=round(timer))
-        timer_text = font.render("Time: " + str(round(timer, 1)), False, (255, 255, 255))
-        screen.blit(timer_text, (100, 100))
 
 pygame.init()  # Initialises pygame
 pygame.font.init()
