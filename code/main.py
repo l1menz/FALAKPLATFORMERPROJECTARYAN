@@ -10,7 +10,7 @@ class Game:
     def __init__(self):
 
         # Game Atrributes
-        self.max_level = 1
+        self.max_level = 3
         self.max_health = 10
         self.current_health = 10
         self.coins = 0
@@ -71,6 +71,13 @@ class Game:
             self.ui.show_coins(self.coins)
             self.check_game_over()
 
+    def timer():
+        timer = 0
+        clock.tick(FPS)
+        timer += 1 / FPS
+        elapsed_time = datetime.timedelta(seconds=round(timer))
+        timer_text = font.render("Time: " + str(round(timer, 1)), False, (255, 255, 255))
+        screen.blit(timer_text, (100, 100))
 
 pygame.init()  # Initialises pygame
 pygame.font.init()
@@ -80,7 +87,6 @@ screen = pygame.display.set_mode((screen_width, screen_height))  # Game screen
 clock = pygame.time.Clock()  # Sets frame limit
 game = Game()
 font = pygame.font.Font('../graphics/ui/MinimalPixel v2.ttf', 20)
-timer = 0
 FPS = 60
 while True:  # While game is running
     for event in pygame.event.get(): # When pygame is running
@@ -92,11 +98,17 @@ while True:  # While game is running
 
     game.run()
 
+    timer = 0
     clock.tick(FPS)
     timer += 1 / FPS
     elapsed_time = datetime.timedelta(seconds=round(timer))
     timer_text = font.render("Time: " + str(round(timer, 1)), False, (255, 255, 255))
     screen.blit(timer_text, (100, 100))
+
+    story_text = font.render("There was once a time of peace for the Falaks. It was taken away by monsters. "
+                             "Exterminate them all!" , False, (255, 255, 255))
+    screen.blit(story_text, (200, 200))
+
 
 
 
