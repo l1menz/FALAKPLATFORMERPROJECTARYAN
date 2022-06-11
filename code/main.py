@@ -81,6 +81,7 @@ clock = pygame.time.Clock()  # Sets frame limit
 game = Game()
 font = pygame.font.Font('../graphics/ui/MinimalPixel v2.ttf', 20)
 FPS = 60
+timer = 0
 while True:  # While game is running
     for event in pygame.event.get(): # When pygame is running
         if event.type == pygame.QUIT:  # When user quits
@@ -91,16 +92,15 @@ while True:  # While game is running
 
     game.run()
 
-    timer = 0
     clock.tick(FPS)
     timer += 1 / FPS
     elapsed_time = datetime.timedelta(seconds=round(timer))
-    timer_text = font.render("Time: " + str(round(timer, 1)), False, (255, 255, 255))
+    timer_text = font.render("Time: " + str(elapsed_time), False, (255, 255, 255))
     screen.blit(timer_text, (100, 100))
 
-    story_text = font.render("There was once a time of peace for the Falaks. It was taken away by monsters. "
-                             "Exterminate them all!" , False, (255, 255, 255))
-    screen.blit(story_text, (200, 200))
+   # story_text = font.render("There was once a time of peace for the Falaks. It was taken away by monsters. "
+                             #"Exterminate them all!" , False, (255, 255, 255))
+    #screen.blit(story_text, (200, 200))
 
 
 
