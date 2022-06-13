@@ -5,7 +5,7 @@ from settings import *
 from level import Level  # Importing from level file
 from overworld import Overworld
 from ui import UI
-#
+
 class Game:
     def __init__(self):
 
@@ -73,15 +73,15 @@ class Game:
 
 
 pygame.init()  # Initialises pygame
-pygame.font.init()
+pygame.font.init() # Initialises font
 screen_width = 1280 # Width of player screen
 screen_height = 720 # Height of player screen
 screen = pygame.display.set_mode((screen_width, screen_height))  # Game screen
 clock = pygame.time.Clock()  # Sets frame limit
 game = Game()
-font = pygame.font.Font('../graphics/ui/MinimalPixel v2.ttf', 20)
-FPS = 60
-timer = 0
+font = pygame.font.Font('../graphics/ui/MinimalPixel v2.ttf', 20) # Calls font
+FPS = 60 # Frames per second
+timer = 0 # Defines timer
 while True:  # While game is running
     for event in pygame.event.get(): # When pygame is running
         if event.type == pygame.QUIT:  # When user quits
@@ -90,20 +90,16 @@ while True:  # While game is running
 
     screen.fill('grey') # Fills screen black
 
-    game.run()
+    game.run() # Runs game
 
-    clock.tick(FPS)
-    timer += 1 / FPS
-    elapsed_time = datetime.timedelta(seconds=round(timer))
-    timer_text = font.render("Time: " + str(elapsed_time), False, (255, 255, 255))
+    clock.tick(FPS) #
+    timer += 1 / FPS # Defines and adds time
+    elapsed_time = datetime.timedelta(seconds=round(timer)) # Elapsed time counts per frame
+    timer_text = font.render("Time: " + str(elapsed_time), False, (255, 255, 255)) # Defines
     screen.blit(timer_text, (100, 100))
 
-   # story_text = font.render("There was once a time of peace for the Falaks. It was taken away by monsters. "
-                             #"Exterminate them all!" , False, (255, 255, 255))
-    #screen.blit(story_text, (200, 200))
-
-
-
-
+    story_text = font.render("There was once a time of peace for the Falaks. It was taken away by monsters. "
+    "Exterminate them all!" , False, (255, 255, 255))
+    screen.blit(story_text, (150, 30))
 
     pygame.display.update()  # Runs what the code displays per frame

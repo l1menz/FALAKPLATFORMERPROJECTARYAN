@@ -1,6 +1,6 @@
-import pygame
-from support import import_folder
-from math import sin
+import pygame # Imports pygame
+from support import import_folder # Imports import folder
+from math import sin # Used for invincibility timer
 
 
 class Player(pygame.sprite.Sprite):
