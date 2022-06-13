@@ -1,17 +1,16 @@
-import pygame
+import pygame # Imports Pygame
 
-from decoration import Sky
-from enemy import Enemy
-from game_data import levels
-from player import Player
-from settings import tile_size, screen_width, screen_height
-from support import import_csv_layout, import_cut_graphics
-from tiles import Tile, StaticTile
-from overworld import Overworld
+from decoration import Sky # Imports class Sky
+from enemy import Enemy # Imports class Enemy
+from game_data import levels # Imports levels dictionary
+from player import Player # Import class Player
+from settings import tile_size, screen_width, screen_height # Import settings
+from support import import_csv_layout, import_cut_graphics # Import functions from support
+from tiles import Tile, StaticTile # Imports classes from tiles
 
 
 class Level:  # Class that contains all level information
-    def __init__(self, current_level, surface, create_overworld, change_coins, change_health):
+    def __init__(self, current_level, surface, create_overworld, change_coins, change_health): # Class arguments
         # Level base
         self.background = pygame.image.load('../graphics/terrain/background_0.png')
         self.display_surface = surface
@@ -23,7 +22,7 @@ class Level:  # Class that contains all level information
         self.coin_sound.set_volume(0.2)
         self.stomp_sound = pygame.mixer.Sound('../audio/effects/stomp.wav')
 
-        # OverWorld Connection
+        # Defines overworld arguments
         self.create_overworld = create_overworld
         self.current_level = current_level
         level_data = levels[self.current_level]
@@ -60,34 +59,34 @@ class Level:  # Class that contains all level information
         #Time
         current_time = pygame.time.get_ticks()
 
-    def create_tile_group(self, layout, type):
+    def create_tile_group(self, layout, type): # Creates the tile logic in game
         sprite_group = pygame.sprite.Group()
 
         for row_index, row in enumerate(layout):
             for col_index, val in enumerate(row):
-                if val != '-1':
+                if val != '-1': # If csv number is -1
                     x = col_index * tile_size
-                    y = row_index * tile_size
+                    y = row_index * tile_size # Creates blank space
 
-                    if type == 'terrain':
+                    if type == 'terrain': # If CSV data is type 'terrain'
                         terrain_tile_list = import_cut_graphics('../graphics/terrain/terrain.png')
                         tile_surface = terrain_tile_list[int(val)]
-                        sprite = StaticTile(tile_size, x, y, tile_surface)
+                        sprite = StaticTile(tile_size, x, y, tile_surface) # Create tile groupset
 
-                    if type == 'coins':
+                    if type == 'coins': # If CSV data type is 'coins'
                         coin_tile_list = import_cut_graphics('../graphics/coins/diamond_1.png')
                         coin_surface = coin_tile_list[int(val)]
-                        sprite = StaticTile(tile_size, x, y, coin_surface)
+                        sprite = StaticTile(tile_size, x, y, coin_surface) # Create coin tile groupset
 
-                    if type == 'enemies':
-                        sprite = Enemy(tile_size, x, y)
+                    if type == 'enemies': # If CSV data type is 'enemies'
+                        sprite = Enemy(tile_size, x, y) # Render sprite and borrow arguments from Class Enemy
 
-                    if type == 'constraints':
-                        sprite = Tile(tile_size, x, y)
+                    if type == 'constraints': # If CSV data type is ;constraints'
+                        sprite = Tile(tile_size, x, y) # Same logic as enemy
 
-                    sprite_group.add(sprite)
+                    sprite_group.add(sprite) # Adds sprites
 
-        return sprite_group
+        return sprite_group # Evaluates sprite group
 
 
     def player_setup(self, layout, change_health):
